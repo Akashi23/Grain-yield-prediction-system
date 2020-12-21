@@ -1,0 +1,25 @@
+filename = './data/finalized_model.sav'
+path_to_data = './data/dataset.csv'
+features_for_train = [
+ 'crop',
+ 'soil',
+ 'region',
+ 'humidity',
+ 'WindGustKmph',
+ 'visibility',
+ 'windspeedKmph',
+ 'tempF',
+ 'HeatIndexC',
+ 'sunHour',
+ 'pressure',
+ 'uvIndex_y',
+ 'year',
+ 'WindChillF',
+ 'weatherCode',
+ 'WindChillC',
+ 'FeelsLikeC',
+ 'FeelsLikeF',
+ 'HeatIndexF',
+ 'DewPointF',
+ 'WindGustMiles',
+ 'visibilityMiles']
