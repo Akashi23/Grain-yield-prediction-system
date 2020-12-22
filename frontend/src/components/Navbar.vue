@@ -15,6 +15,10 @@
         <router-link class="nav-link" :to="{ path: 'dashboard' }">Dashboard</router-link>
         <!--<a class="nav-link" href="/dashboard">Dashboard</a> -->
       </li>
+      <li class="nav-item">
+        <router-link class="nav-link" :to="{ path: 'predict' }">Predict</router-link>
+        <!--<a class="nav-link" href="/dashboard">Dashboard</a> -->
+      </li>
     </ul>
   </div>
 </nav>

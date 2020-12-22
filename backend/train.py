@@ -7,8 +7,8 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics import mean_squared_error
 
-from config import path_to_data, filename
-from config import features_for_train
+from server.config import path_to_data, filename
+from server.config import features_for_train
 
 
 class Train():
