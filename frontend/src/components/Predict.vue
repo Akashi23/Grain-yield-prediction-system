@@ -41,7 +41,7 @@
             </table>
           </div>
         </div>
-        <button type="button" class="btn btn-primary ml-5 mt-5" v-on:click="predict_data(test_x)">Primary</button>
+        <button type="button" class="btn btn-primary ml-5 mt-5" v-on:click="predict_data(test_x)">Предсказать</button>
         <div class="d-flex justify-content-center">
          <div class="card ">
           <div class="card-body">

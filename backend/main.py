@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 import pandas as pd
@@ -108,7 +108,11 @@ def send_data_to_test():
         "test_y": test_y.iloc[[row]].values.tolist()
     }
     
-
+@app.post("/upload")
+async def create_upload_file(file: UploadFile = File(...)):
+    with open(f'./data/docx/{file.filename}', 'wb') as f:
+        f.write(file.file.read())
+    return {"filename": file.filename}
 
 @app.get("/tables")
 def tables():

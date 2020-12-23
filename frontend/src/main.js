@@ -5,6 +5,7 @@ import Table from "./components/Table.vue"
 import PageNotFound from "./components/PageNotFound.vue"
 import Dashboard from "./components/Dashboard.vue"
 import Predict from "./components/Predict.vue"
+import Upload from "./components/Upload.vue"
 
 Vue.use(VueRouter)
 
@@ -16,6 +17,7 @@ const router = new VueRouter({
         { path: '/', component: Table },
         { path: '/dashboard', component: Dashboard },
         { path: '/predict', component: Predict },
+        { path: '/upload', component: Upload },
         { path: "*", component: PageNotFound }
     ]
 })
