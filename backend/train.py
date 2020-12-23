@@ -7,8 +7,8 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics import mean_squared_error
 
-from server.config import path_to_data, filename
-from server.config import features_for_train
+from config import path_to_data, filename
+from config import features_for_train
 
 
 class Train():
@@ -25,9 +25,9 @@ class Train():
             self.encoder(df, i)
         return df
 
-    def normalize(self):
-        features = features_for_train
-        data = self.encode_data(self.data)
+    def normalize(self, data, features_for_train_):
+        features = features_for_train_
+        data = self.encode_data(data)
         data_changed = data[features]
         data_y = data_changed['crop']
         data_x = data_changed.drop(columns=['crop'])
@@ -41,8 +41,9 @@ class Train():
 
     def train(self):
         print('INFO: Normalize data!')
-        data_x, data_y = self.normalize()
+        data_x, data_y = self.normalize(self.data, features_for_train)
         print('INFO: Split data!')
+        print(data_x)
         data_x_train, data_x_test, data_y_train, data_y_test = train_test_split(data_x,
                                                                                 data_y,
                                                                                 test_size=0.20,

@@ -4,8 +4,10 @@ import uvicorn
 import pandas as pd
 import joblib
 import json
-
+import random
 from config import path_to_data, filename
+from config import features_for_train
+from train import Train
 
 app = FastAPI()
 
@@ -94,11 +96,28 @@ def show_soil():
     
     return data_for_return
 
+def send_data_to_test():
+    encoder = Train() 
+    row = random.randint(0, 20000)
+    data_for_tr = data.copy() 
+    test_show = [data.iloc[[row]].columns.values.tolist()] + data.iloc[[row]].values.tolist()
+    test_x, test_y = encoder.normalize(data_for_tr, features_for_train.copy())
+    return {
+        "test_show": test_show,
+        "test_x": test_x.iloc[[row]].to_dict(),
+        "test_y": test_y.iloc[[row]].values.tolist()
+    }
+    
+
 
 @app.get("/tables")
 def tables():
     data_list = [data.columns.values.tolist()] + data.values.tolist()
     return {'data': data_list[:400]}
+
+@app.get("/crop_test")
+def crop_test():
+    return send_data_to_test()
 
 @app.get("/dashboard")
 def dashboard_humidity():
@@ -116,9 +135,12 @@ def dashboard_humidity():
     return data_list
 
 @app.post("/predict")
-def predict(data_x_test):
+def predict(data_x_test: dict):
     loaded_model = joblib.load(filename)
+    data_x_test = pd.DataFrame(data_x_test)
     predicted = loaded_model.predict(data_x_test)
+    predicted = str(predicted).replace('[','')
+    predicted = str(predicted).replace(']','')
     return {'predicted': predicted}
 
 if __name__ == "__main__":
