@@ -10,7 +10,7 @@ EXPOSE 8000
 
 RUN mkdir app
 
-WORKDIR app
+WORKDIR /app
 
 COPY . .
 

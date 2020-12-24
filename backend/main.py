@@ -8,6 +8,8 @@ import random
 from config import path_to_data, filename
 from config import features_for_train
 from train import Train
+import os
+import re
 
 app = FastAPI()
 
@@ -97,32 +99,53 @@ def show_soil():
     return data_for_return
 
 def send_data_to_test():
+    test_data = pd.read_csv('./data/dataset_test.csv')
     encoder = Train() 
-    row = random.randint(0, 20000)
-    data_for_tr = data.copy() 
-    test_show = [data.iloc[[row]].columns.values.tolist()] + data.iloc[[row]].values.tolist()
+    row = 3
+    data_for_tr = test_data.copy() 
+    test_show = [test_data.iloc[[row]].columns.values.tolist()] + test_data.iloc[[row]].values.tolist()
     test_x, test_y = encoder.normalize(data_for_tr, features_for_train.copy())
     return {
         "test_show": test_show,
         "test_x": test_x.iloc[[row]].to_dict(),
         "test_y": test_y.iloc[[row]].values.tolist()
     }
-    
+### UPLOAD #######    
 @app.post("/upload")
 async def create_upload_file(file: UploadFile = File(...)):
-    with open(f'./data/docx/{file.filename}', 'wb') as f:
-        f.write(file.file.read())
-    return {"filename": file.filename}
+    x = re.findall(r'([0-9]+ [0-9]+)', file.filename)
+    filename = x[0].replace(' ', '_')
 
+    docs = [f for f in os.listdir('./data/docx')]
+    for i in docs:
+        os.remove(f'./data/docx/{i}')
+
+    with open(f'./data/doc/{filename}.doc', 'wb') as f:
+        f.write(file.file.read())
+    
+    os.system(f'python parse/doc_to_docx.py ./data/doc/{filename}.doc')
+    os.system(f'python parse/save_to_csv.py {filename}')
+    os.system(f'python parse/merge.py')
+
+    return {"filename": file.filename}
+### UPLOAD #######
+
+
+### TABLE #######
 @app.get("/tables")
 def tables():
     data_list = [data.columns.values.tolist()] + data.values.tolist()
     return {'data': data_list[:400]}
+### TABLE #######
 
+### CROP_TEST #######
 @app.get("/crop_test")
 def crop_test():
     return send_data_to_test()
 
+### CROP_TEST #######
+
+### DASHBOARD #######
 @app.get("/dashboard")
 def dashboard_humidity():
     region = list(data['region'].unique())
@@ -137,7 +160,9 @@ def dashboard_humidity():
         "soils": show_soil()
     }
     return data_list
+### DASHBOARD #######
 
+### PREDICT #######
 @app.post("/predict")
 def predict(data_x_test: dict):
     loaded_model = joblib.load(filename)
@@ -145,7 +170,9 @@ def predict(data_x_test: dict):
     predicted = loaded_model.predict(data_x_test)
     predicted = str(predicted).replace('[','')
     predicted = str(predicted).replace(']','')
-    return {'predicted': predicted}
-
+    if float(predicted) < 0:
+        predicted = 1
+    return {'predicted': str(predicted)}
+### PREDICT #######
 if __name__ == "__main__":
     uvicorn.run("main:app", port=8000, reload=True)
