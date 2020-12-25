@@ -10,13 +10,15 @@ def parse(filename):
     df = pd.DataFrame(weather['data']['weather'])
     df2 = pd.DataFrame()
     df['date'] = pd.to_datetime(df['date'])
+    print(df['date'])
     s = 0
-    date = df['date'][0]
+
     df['year'] = df['date'].dt.year
     df['month']= df['date'].dt.month
     df['day']= df['date'].dt.day
     
-    for i in weather['data']['weather']:
+    for num, i in enumerate(weather['data']['weather']):
+        date = df['date'][num]
         for j in i['hourly']:
             j['date'] = date
             df2 = pd.concat([df2, pd.DataFrame(j)], ignore_index=True)
@@ -24,7 +26,9 @@ def parse(filename):
 
     df2['date'] = pd.to_datetime(df2['date'])
     df = df.drop(columns=['astronomy', 'hourly'])
+    print(df2)
     s = pd.merge_asof(df, df2, on="date")
+    
     s = s.drop(s.tail(1).index, axis=0)
     s = s.drop('weatherIconUrl', axis=1)
     return s

@@ -1,5 +1,6 @@
 from fastapi import FastAPI, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
+from sklearn.metrics import mean_squared_error
 import uvicorn
 import pandas as pd
 import joblib
@@ -10,6 +11,7 @@ from config import features_for_train
 from train import Train
 import os
 import re
+import math
 
 app = FastAPI()
 
@@ -103,12 +105,13 @@ def send_data_to_test():
     encoder = Train() 
     row = 3
     data_for_tr = test_data.copy() 
-    test_show = [test_data.iloc[[row]].columns.values.tolist()] + test_data.iloc[[row]].values.tolist()
+    test_show = [test_data.columns.values.tolist()] + test_data.values.tolist()
     test_x, test_y = encoder.normalize(data_for_tr, features_for_train.copy())
     return {
         "test_show": test_show,
-        "test_x": test_x.iloc[[row]].to_dict(),
-        "test_y": test_y.iloc[[row]].values.tolist()
+        "test_x": test_x.to_dict(),
+        "test_y": [test_y.values.tolist()],
+        "test_y_pred": test_y
     }
 ### UPLOAD #######    
 @app.post("/upload")
@@ -117,8 +120,18 @@ async def create_upload_file(file: UploadFile = File(...)):
     filename = x[0].replace(' ', '_')
 
     docs = [f for f in os.listdir('./data/docx')]
+    print(docs)
     for i in docs:
         os.remove(f'./data/docx/{i}')
+    print(docs)
+    docs = [f for f in os.listdir('./data/doc')]
+    for i in docs:
+        os.remove(f'./data/doc/{i}')
+
+    docs = [f for f in os.listdir('./parse/json')]
+    print(docs)
+    for i in docs:
+        os.remove(f'./parse/json/{i}')
 
     with open(f'./data/doc/{filename}.doc', 'wb') as f:
         f.write(file.file.read())
@@ -126,6 +139,7 @@ async def create_upload_file(file: UploadFile = File(...)):
     os.system(f'python parse/doc_to_docx.py ./data/doc/{filename}.doc')
     os.system(f'python parse/save_to_csv.py {filename}')
     os.system(f'python parse/merge.py')
+
 
     return {"filename": file.filename}
 ### UPLOAD #######
@@ -164,15 +178,29 @@ def dashboard_humidity():
 
 ### PREDICT #######
 @app.post("/predict")
-def predict(data_x_test: dict):
+def predict(data_test: list):
     loaded_model = joblib.load(filename)
-    data_x_test = pd.DataFrame(data_x_test)
-    predicted = loaded_model.predict(data_x_test)
+    data_test_x = pd.DataFrame(data_test[0])
+    predicted = loaded_model.predict(data_test_x)
     predicted = str(predicted).replace('[','')
     predicted = str(predicted).replace(']','')
-    if float(predicted) < 0:
-        predicted = 1
-    return {'predicted': str(predicted)}
+    predicted = predicted.split(' ')
+    while("" in predicted): 
+        predicted.remove("")
+
+    for i, value in enumerate(predicted):
+        if "\n" in value:
+            predicted[i].replace('\n', '')
+        predicted[i] = float(value)
+
+    print(predicted)
+    # print(data_test[1])
+    # print(mean_squared_error(data_test[1], predicted))
+    return {
+        'predicted': predicted,
+        # 'rmse': math.sqrt(mean_squared_error(pd.DataFrame(data_test[1]), predicted))
+    }
+    
 ### PREDICT #######
 if __name__ == "__main__":
     uvicorn.run("main:app", port=8000, reload=True)

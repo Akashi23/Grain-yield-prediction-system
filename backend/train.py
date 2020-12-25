@@ -51,7 +51,7 @@ class Train():
                                                                                 test_size=0.20,
                                                                                 random_state=42)
         print('INFO: Train data!')
-        model = XGBRegressor( random_state=42)
+        model = XGBRegressor(random_state=42)
         
         DTrain = DMatrix(data_x_train, data_y_train)
         x_parameters = {"max_depth": 3}
