@@ -21,8 +21,9 @@ def parse(filename):
         date = df['date'][num]
         for j in i['hourly']:
             j['date'] = date
+            j['weatherDesc'] = j['weatherDesc'][0]['value']
             df2 = pd.concat([df2, pd.DataFrame(j)], ignore_index=True)
-            df2['weatherDesc'] = j['weatherDesc'][0]['value']
+            
 
     df2['date'] = pd.to_datetime(df2['date'])
     df = df.drop(columns=['astronomy', 'hourly'])

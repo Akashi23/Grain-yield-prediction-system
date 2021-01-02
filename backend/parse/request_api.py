@@ -2,7 +2,7 @@ import requests as req
 import time
 
 def request_to_api(year, month, city, city_str):
-    api_key = 'a9c2e93b038b43848f5111151202810'
+    api_key = '1d0ec331ba51404790a93924210201'
 
     date = f'{year}-{month}-01'
     enddate = f'{year}-{month+1}-01'

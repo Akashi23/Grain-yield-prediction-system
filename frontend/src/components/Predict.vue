@@ -22,6 +22,7 @@
             <table class="table table-bordered table-striped mb-0">
               <thead>
                 <tr>
+                  <th>Index</th>
                   <th
                     scope="col"
                     v-for="columns in test_show[0]"
@@ -32,7 +33,10 @@
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="column in test_all" :key="column.id">
+                <tr v-for="(column, index) in test_all" :key="column.id">
+                  <td>
+                    {{ index }}
+                  </td>
                   <td scope="col" v-for="row in column" :key="row.id">
                     {{ row }}
                   </td>
@@ -48,75 +52,6 @@
         >
           Предсказать
         </button>
-        <div class="d-flex justify-content-center">
-          <div class="card">
-            <div class="card-body">
-              <h5 class="card-title">Предсказание</h5>
-              <div class="container">
-                <h1 class="d-flex justify-content-center">
-                  Данные для теста
-                </h1>
-                <div
-                  class="table-wrapper-scroll-y my-custom-scrollbar d-inline-flex"
-                >
-                  <table class="table table-bordered table-striped mb-0">
-                    <thead>
-                      <!-- <tr> -->
-                      <th scope="col">Тестовые</th>
-                      <!-- <th
-                        scope="col-1"
-                      >
-                        Предсказание
-                      </th> -->
-                      <!-- </tr> -->
-                    </thead>
-                    <tbody>
-                      <tr scope="col" v-for="row in test_y[0]" :key="row.id">
-                        <!-- <td>
-                          {{ row.id }}
-                        </td> -->
-                        <td>
-                          {{ row }}
-                        </td>
-                      </tr>
-                      <!-- <tr scope="col" class="" v-for="row in test_res" :key="row.id">
-                      <td >
-                        {{ row }}
-                      </td>
-                    </tr> -->
-                    </tbody>
-                  </table>
-                </div>
-                <div
-                  class="table-wrapper-scroll-y my-custom-scrollbar d-inline-flex"
-                >
-                  <table class="table table-bordered table-striped mb-0">
-                    <thead>
-                      <!-- <tr> -->
-                      <th scope="col">Предсказание</th>
-                      <!-- </tr> -->
-                    </thead>
-                    <tbody>
-                      <tr
-                        scope="col"
-                        class=""
-                        v-for="row in test_res"
-                        :key="row.id"
-                      >
-                        <td>
-                          {{ row }}
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-            <div class="card-footer">
-              <small class="text-muted">{{rmse}}</small>
-            </div>
-          </div>
-        </div>
       </div>
     </section>
   </div>
@@ -151,7 +86,7 @@ export default {
       return this.test_show.slice(1, 800);
     },
     test_res() {
-      if (this.crops != null) return this.crops.slice(1, 800);
+      if (this.crops != null) return this.crops.slice(0, 800);
       console.log(this.crops);
       return null;
     },

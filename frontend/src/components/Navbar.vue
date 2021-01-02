@@ -12,15 +12,7 @@
         <router-link class="nav-link" :to="{ path: '/' }">Home</router-link>
       </li>
       <li class="nav-item">
-        <router-link class="nav-link" :to="{ path: 'dashboard' }">Dashboard</router-link>
-        <!--<a class="nav-link" href="/dashboard">Dashboard</a> -->
-      </li>
-      <li class="nav-item">
         <router-link class="nav-link" :to="{ path: 'predict' }">Predict</router-link>
-        <!--<a class="nav-link" href="/dashboard">Dashboard</a> -->
-      </li>
-      <li class="nav-item">
-        <router-link class="nav-link" :to="{ path: 'upload' }">Upload</router-link>
         <!--<a class="nav-link" href="/dashboard">Dashboard</a> -->
       </li>
     </ul>

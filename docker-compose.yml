@@ -1,0 +1,50 @@
+version: "3.9"
+
+services:
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    
+    container_name: grafana
+    volumes:
+      - grafana-storage:/var/lib/grafana
+
+    links:
+      - postgres
+
+  postgres:
+    image: postgres:12-alpine
+    ports:
+      - "5432:5432"
+    
+    container_name: postgres
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - PGDATA=/var/lib/postgresql/data/pgdata
+
+    volumes:
+      - data:/var/lib/postgresql/data
+    
+  postgres-admin:
+    image: dpage/pgadmin4:latest
+    ports:
+      - "5050:80"
+    
+    container_name: pgadmin4
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=da.zh.99@mail.ru
+      - PGADMIN_DEFAULT_PASSWORD=postgres
+
+    volumes:
+      - data-admin:/var/lib/pgadmin
+    
+    links:
+      - postgres
+
+volumes:
+  grafana-storage: {}
+  data: {}
+  data-admin: {}
