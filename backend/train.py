@@ -60,7 +60,15 @@ class Train():
         model.fit(data_x_train, data_y_train)
         # cross_validate(model, data_x_train, data_y_train, cv=7)
         data_y_pred = model.predict(data_x_test)
+        data_y_test_db = pd.DataFrame(data_y_test, columns=['crop']).reset_index(drop=True)
+        data_y_pred_db = pd.DataFrame(data_y_pred, columns=['crop_pred'])
+        data_x_test_db = data_x_test.reset_index(drop=True)
+        result = pd.concat([data_x_test_db, data_y_test_db, data_y_pred_db], axis=1)
+        print(result)
+
+        # send_old_data_test_to_db(result)
         print('INFO: Model predicted(rmse): ', math.sqrt(mean_squared_error(data_y_test, data_y_pred)))
+
         joblib.dump(model, filename)
 
 if __name__ == "__main__":
