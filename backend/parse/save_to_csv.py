@@ -32,6 +32,8 @@ def region_parse():
                 region_r = region
                 if region == 'Сұлтан қаласы':
                     region_r = 'Астана қаласы'
+                if region == 'Шымкент қаласы':
+                    region_r = 'Оңтүстік Қазақстан'
                 print(region)
                 data.append([year, month, region_r, float(info[region])])
 
@@ -58,7 +60,6 @@ def weather_parse(year, month):
         {'soltustik':'Солтүстік Қазақстан'},
         {'shygys':'Шығыс Қазақстан'},
         {'astana': 'Астана қаласы'},
-        {'almaty2': 'Алматы'}
         ]
     
     cities_str = {
@@ -77,7 +78,6 @@ def weather_parse(year, month):
         'soltustik':'akmola+kazakhstan',
         'shygys':'semey+kazakhstan',
         'astana': 'astana+kazakhstan',
-        'almaty2': 'almaty+kazakhstan'
         }
 
     for i in cities_str:

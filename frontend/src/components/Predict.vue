@@ -92,12 +92,11 @@ export default {
     },
   },
   methods: {
-    predict_data: function (data, data_y) {
+    predict_data: function () {
       axios
-        .post("http://localhost:8000/predict", [data, data_y])
+        .get("http://localhost:8000/predict")
         .then((response) => {
           this.crops = response.data.predicted;
-          this.rmse = response.data.rmse;
           console.log(this.crops);
         })
         .catch((error) => {
@@ -112,7 +111,6 @@ export default {
       test_x: null,
       test_y: null,
       test_y_pred: null,
-      rmse: null,
       predicted_data: null,
       loading: true,
       errored: false,

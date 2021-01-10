@@ -9,8 +9,8 @@ import joblib
 
 from fastapi import FastAPI, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
-# from sklearn.metrics import mean_squared_error
-from config import path_to_data, filename
+from sklearn.metrics import mean_squared_error
+from config import path_to_data, filename, filename_scaler
 from config import features_for_train
 from train import Train
 from data_sender_to_db import send_dataset_test
@@ -46,13 +46,6 @@ def send_data_to_test():
         "test_y_pred": test_y
     }
 
-
-def mean_30(array):
-    summa = 0
-    for i in array:
-        summa += i
-    # return max(array)
-    return float(summa/len(array))
 
 
 ### UPLOAD #######
@@ -92,29 +85,37 @@ def crop_test():
     return send_data_to_test()
 
 ### PREDICT #######
-@app.post("/predict")
-def predict(data_test: list):
-    loaded_model = joblib.load(filename)
-    data_test_x = pd.DataFrame(data_test[0])
-    predicted = loaded_model.predict(data_test_x)
-    predicted = str(predicted).replace('[', '')
-    predicted = str(predicted).replace(']', '')
-    predicted = predicted.split(' ')
-    while("" in predicted):
-        predicted.remove("")
+@app.get("/predict")
+def predict():
+    test_data = pd.read_csv('./data/dataset_test.csv')
+    data_all = data.copy()
+    loaded_model = joblib.load(filename)   
+    encoder = joblib.load(filename_scaler)
+    train = Train()
+    object_types = ['soil', 'region', 'weatherDesc', 'winddir16Point']
+    
 
-    for i, value in enumerate(predicted):
-        if "\n" in value:
-            predicted[i].replace('\n', '')
-        predicted[i] = float(value)
+    data_for_tr = test_data.copy()
+    data_y_test = test_data['crop']
+    for i in object_types:
+        le = train.encoder(data_all, i)
+        le.transform(data_for_tr[i])
 
-    print(predicted)
-    # print(data_test[1])
-    # print(mean_squared_error(data_test[1], predicted))
-    predicted.append(len(predicted))
+
+    data_x_test = pd.DataFrame(encoder.transform(data_for_tr), columns=features_for_train.copy())
+    data_y_pred = loaded_model.predict(data_x_test)
+    print(math.sqrt(mean_squared_error(data_y_test, data_y_pred)))
+    print(data_y_test, pd.DataFrame(data_y_pred))
+    data_y_test_db = pd.DataFrame(data_y_test, columns=['crop']).reset_index(drop=True)
+    data_y_pred_db = pd.DataFrame(data_y_pred, columns=['crop_pred'])
+    date = data['date']
+    data_x_test = data_x_test.merge(date, left_index=True, right_index=True)
+    print(data_x_test['date'])
+    data_x_test_db = data_x_test.reset_index(drop=True)
+    result = pd.concat([data_x_test_db, data_y_test_db, data_y_pred_db], axis=1)
+    result.to_csv('data/dataset_new_test.csv', index=False)
     return {
-        'predicted': predicted,
-        # 'rmse': math.sqrt(mean_squared_error(pd.DataFrame(data_test[1]), predicted))
+        'predicted': str(data_y_pred),
     }
 
 
