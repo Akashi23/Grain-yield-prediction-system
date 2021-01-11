@@ -32,9 +32,12 @@ d = {
 }
 
 d = pd.DataFrame(data=d)
-
+print(df2)
 df = pd.merge(df1, df2, on=['region','month', 'year'], sort=False)
+print(df)
 df = pd.merge(df, d, on=['region'], sort=False)
+print(df)
 df = df.sort_values(by=['year', 'month'])
+print(df)
 
 df.to_csv('./data/dataset_test.csv', index=False)

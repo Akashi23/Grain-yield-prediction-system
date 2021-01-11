@@ -3,11 +3,11 @@ import time
 
 def request_to_api(year, month, city, city_str):
     api_key = '1d0ec331ba51404790a93924210201'
-    if month != 1:
-        month -= 1
-    else:
-        month == 12
-        year -= 1
+    # if month != 1:
+    #     month -= 1
+    # else:
+    #     month == 12
+    #     year -= 1
         
     date = f'{year}-{month}-01'
     enddate = f'{year}-{month+1}-01'
