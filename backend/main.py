@@ -109,15 +109,21 @@ def predict():
         le = train.encoder(data_all, i)
         data_for_tr[i] = le.transform(data_for_tr[i])
 
-    data_for_tr = data_for_tr[features_for_train.copy()].drop(columns=['crop'])
+    date = data_for_tr[['year', 'month', 'day']]
+    data_for_tr = data_for_tr[features_for_train.copy()].drop(columns=['crop', 'year', 'month', 'day'])
     print(data_for_tr)
 
     features = features_for_train.copy()
     features.remove('crop')
+    features.remove('year')
+    features.remove('month')
+    features.remove('day')
 
     data_x_test = pd.DataFrame(
         encoder.transform(data_for_tr),
         columns=features)
+
+    data_x_test = data_x_test.merge(date, left_index=True, right_index=True)
 
     data_y_pred = loaded_model.predict(data_x_test)
 
@@ -130,9 +136,11 @@ def predict():
         drop=True)
 
     data_y_pred_db = pd.DataFrame(data_y_pred, columns=['crop_pred'])
-    date = data['date']
-    
+    date = test_data['date']
+    region = test_data['region']
     data_x_test = data_x_test.merge(date, left_index=True, right_index=True)
+    data_x_test = data_x_test.drop(columns=['region'])
+    data_x_test = data_x_test.merge(region, left_index=True, right_index=True)
 
     print(data_x_test['date'])
 
@@ -144,7 +152,10 @@ def predict():
     
     send_dataset_new_test(False)
     
+
     os.system('python train.py')
+
+    send_dataset_train_test(False)
 
     dataset = pd.read_csv('./data/dataset.csv')
     dataset_test = pd.read_csv('./data/dataset_test.csv')

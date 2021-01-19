@@ -6,12 +6,11 @@
     <section v-else>
     <div v-if="loading">
       <div class="d-flex justify-content-center"><h1 class="">Загрузка данных...</h1></div>
-      <div class="d-flex justify-content-center"><img class="" src="http://i.stack.imgur.com/SBv4T.gif" alt="this slowpoke moves"  width=250/></div>
+      <div class="d-flex justify-content-center"><img class="" src="https://flevix.com/wp-content/uploads/2019/12/Quarter-Circle-Loading-Image-1.gif" alt="this slowpoke moves"  width=250/></div>
       
     </div>
     <div v-else-if="loaded && loading == false">
-      <div class="d-flex justify-content-center"><h1 class="">Загрузился</h1></div>
-      <div class="d-flex justify-content-center"><img class="" src="https://media.giphy.com/media/8JW82ndaYfmNoYAekM/giphy.gif" alt="this slowpoke moves"  width=250/></div>   
+      <div class="d-flex justify-content-center"><h1 class="">Загрузился</h1></div> 
     </div>
     <div class="container" v-else>
     <h1 class="d-flex justify-content-center">Загрузка статистических данных из stat.gov.kz</h1>

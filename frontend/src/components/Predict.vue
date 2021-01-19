@@ -10,7 +10,7 @@
     <section v-else>
       <div class="d-flex justify-content-center" v-if="loading">
         <img
-          src="http://i.stack.imgur.com/SBv4T.gif"
+          src="https://flevix.com/wp-content/uploads/2019/12/Quarter-Circle-Loading-Image-1.gif"
           alt="this slowpoke moves"
           width="250"
         />
