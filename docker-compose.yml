@@ -9,6 +9,7 @@ services:
     container_name: grafana
     volumes:
       - grafana-storage:/var/lib/grafana
+      - datasource:/etc/grafana
 
     links:
       - postgres
@@ -48,3 +49,4 @@ volumes:
   grafana-storage: {}
   data: {}
   data-admin: {}
+  datasource: {}
